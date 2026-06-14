@@ -130,3 +130,64 @@ PLAY RECAP ****************************************************************
 
 localhost : ok=2 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
 ```
+## Задание 2
+
+### Модифицированный playbook MOTD
+
+Файл: `playbook_motd.yml`
+
+```yaml id="q0j2r8"
+---
+- name: Change system MOTD
+  hosts: localhost
+  become: true
+
+  vars:
+    admin_message: "Have a good day, system administrator!"
+
+  tasks:
+    - name: Set MOTD
+      ansible.builtin.copy:
+        dest: /etc/motd
+        mode: '0644'
+        content: |
+          Hostname: {{ ansible_hostname }}
+          IP address: {{ ansible_default_ipv4.address }}
+
+          {{ admin_message }}
+```
+
+### Проверка синтаксиса
+
+```bash id="9d4v8l"
+ansible-playbook playbook_motd.yml --syntax-check
+```
+
+### Запуск playbook
+
+```bash id="o4bxbe"
+ansible-playbook playbook_motd.yml -c local --ask-become-pass
+```
+
+### Результат выполнения
+
+```text id="jlwm0w"
+PLAY RECAP ****************************************************************
+
+localhost : ok=2 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
+```
+
+### Проверка результата
+
+```bash id="jlwm8c"
+cat /etc/motd
+```
+
+Пример вывода:
+
+```text id="jlwm5w"
+Hostname: chernez-Virtual-Machine
+IP address: 192.168.1.145
+
+Have a good day, system administrator!
+```
